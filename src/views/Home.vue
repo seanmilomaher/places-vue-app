@@ -2,9 +2,12 @@
   <div class="home">
 
     <h1>Add Place</h1>
-    <p>Name: <input type="text" v-model="newPlaceName"></p>
-    <p>Address: <input type="text" v-model="newPlaceAddress"></p>
-    <button v-on:click="placesCreate">Create Place</button>
+    <div>
+      <p v-for="error in createErrors" :key="error">{{ error }}</p>
+      <p>Name: <input type="text" v-model="newPlaceName"></p>
+      <p>Address: <input type="text" v-model="newPlaceAddress"></p>
+      <button v-on:click="placesCreate">Create Place</button>
+    </div>
 
     <h1>All Places</h1>
     <div v-for="place in places" :key="place.id">
@@ -16,6 +19,7 @@
     <dialog>
       <form method="dialog">
         <h2>Place Info</h2>
+        <p v-for="error in updateErrors" :key="error">{{ error }}</p>
         <p>Name: <input type="text" v-model="currentPlace.name"></p>
         <p>Address: <input type="text" v-model="currentPlace.address"></p>
         <button>Close</button>
@@ -39,6 +43,8 @@ export default {
       newPlaceName: "",
       newPlaceAddress: "",
       currentPlace: {},
+      createErrors: [],
+      updateErrors: []
     };
   },
   created: function () {
@@ -65,7 +71,8 @@ export default {
         this.places.push(response.data);
       })
       .catch(error => {
-        console.log(error.response.data.errors)
+        console.log(error.response.data.errors);
+        this.createErrors = error.response.data.errors;
       })
     },
     placesShow: function (inputPlace) {
@@ -84,7 +91,8 @@ export default {
         console.log("You did it!", response.data);
       })
       .catch(error => {
-        console.log(error.response.data);
+        console.log(error.response.data.errors);
+        this.updateErrors = error.response.data.errors;
       })
     },
     placesDestroy: function(inputPlace) {
